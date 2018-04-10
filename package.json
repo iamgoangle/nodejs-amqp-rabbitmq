@@ -1,0 +1,22 @@
+{
+  "name": "rabbitmq-nodejs",
+  "version": "1.0.0",
+  "description": "RabbitMQ integration with NodeJS",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start:publisher": "./node_modules/.bin/nodemon src/publisher.js",
+    "start:consumer": "./node_modules/.bin/nodemon src/consumer.js",
+    "start:consumer-2": "./node_modules/.bin/nodemon src/consumer_2.js"
+  },
+  "keywords": [
+    "rabbit",
+    "mq"
+  ],
+  "author": "Teerapong Singthong",
+  "license": "ISC",
+  "dependencies": {
+    "amqplib": "^0.5.2",
+    "nodemon": "^1.17.3"
+  }
+}
