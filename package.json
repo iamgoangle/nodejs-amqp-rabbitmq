@@ -1,13 +1,11 @@
 {
-  "name": "rabbitmq-nodejs",
+  "name": "nodejs-amqp-rabbitmq",
   "version": "1.0.0",
-  "description": "RabbitMQ integration with NodeJS",
+  "description": "Demo RabbitMQ AMQP NodeJS",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start:publisher": "./node_modules/.bin/nodemon src/publisher.js",
-    "start:consumer": "./node_modules/.bin/nodemon src/consumer.js",
-    "start:consumer-2": "./node_modules/.bin/nodemon src/consumer_2.js"
+    "start:producer": "npx nodemon src/producer.js",
+    "start:consumer": "npx nodemon src/consumer.js"
   },
   "keywords": [
     "rabbit",

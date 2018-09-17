@@ -1,21 +1,32 @@
 version: '3'
 services:
-    nodejs:
-        image: node:9.11.1
-        tty: true
-        volumes:
-            - "./src:/usr/app"
-    rabbitmq:
-        image: rabbitmq:management-alpine
-        tty: true
-        # environment:
-            # RABBITMQ_DEFAULT_USER: "guest"
-            # RABBITMQ_DEFAULT_PASS: "guest"
-            # RABBITMQ_DEFAULT_VHOST: "/"
-        ports:
-            - "15672:15672"
-            - "5672:5672"
-networks:
-    default:
-       external:
-           name: microservicenetwork
+  producer:
+    container_name: producer
+    image: node:9.11.1
+    tty: true
+    volumes:
+      - './src/producer.js:/usr/app/producer'
+    command: npx/nodemon /usr/app/producer/producer.js
+    links:
+      - rabbitmq
+
+  consumer:
+    container_name: consumer
+    image: node:9.11.1
+    tty: true
+    volumes:
+      - './src/consumer.js:/usr/app/consumer'
+    command: npx/nodemon /usr/app/producer/consumer.js
+    links:
+      - rabbitmq
+
+  rabbitmq:
+    image: rabbitmq:management-alpine
+    tty: true
+    environment:
+      RABBITMQ_DEFAULT_VHOST: '/'
+    #   RABBITMQ_DEFAULT_USER: 'admin'
+    #   RABBITMQ_DEFAULT_PASS: 'admin'
+    ports:
+      - '15672:15672'
+      - '5672:5672'

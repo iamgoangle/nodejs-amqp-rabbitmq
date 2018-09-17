@@ -1,30 +1,99 @@
-/**
- * Spike - Consumer Message Queue
- * @author  Teerapong, Singthong
- */
+// Do not use this code on your production
+const q = 'Customer created event'
+const amqp = require('amqplib/callback_api')
 
-const q = 'tasks';
-const open = require('amqplib').connect('amqp://localhost');
+async function loyaltyService() {
+  const conn = amqp.connect(
+    'amqp://localhost',
+    (err, conn) => {
+      conn.createChannel((err, ch) => {
+        var ex = 'Customer created event'
 
-async function consumer() {
-  console.log(`%s  Launch consumer...`, '🚁');
-  try {
-    const conn = await open;  // open connection
-    const ch = await conn.createChannel();  // create channel
-    const assertQueue = await ch.assertQueue(q); // once queue error re-enqueue
+        ch.assertExchange(ex, 'fanout', { durable: false })
 
-    await ch.consume(q, (msg) => {
-      if (msg === null) {
-        throw `🙉 Error to consume the queue`;
-      }
+        ch.assertQueue('', { exclusive: true }, (err, q) => {
+          console.log(
+            ' [*] Waiting for messages in %s. To exit press CTRL+C',
+            q.queue
+          )
+          ch.bindQueue(q.queue, ex, '')
 
-      console.log(`😊  Success! retrieve message from queue`);
-      console.log(msg.content.toString());
-      ch.ack(msg);
-    }, { noAck: false });
-  } catch (e) {
-    console.error(`🙅  Cannot connect to queue`);
-  }
+          ch.consume(
+            q.queue,
+            msg => {
+              console.log(' 💎 %s', msg.content.toString())
+              console.log(' 💎 Create loyalty package for new customer...')
+            },
+            { noAck: true }
+          )
+        })
+      })
+    }
+  )
 }
 
-consumer();
+async function postService() {
+  const conn = amqp.connect(
+    'amqp://localhost',
+    (err, conn) => {
+      conn.createChannel((err, ch) => {
+        var ex = 'Customer created event'
+
+        ch.assertExchange(ex, 'fanout', { durable: false })
+
+        ch.assertQueue('', { exclusive: true }, (err, q) => {
+          console.log(
+            ' [*] Waiting for messages in %s. To exit press CTRL+C',
+            q.queue
+          )
+          ch.bindQueue(q.queue, ex, '')
+
+          ch.consume(
+            q.queue,
+            msg => {
+              console.log(' 📦 %s', msg.content.toString())
+              console.log(' 📦 Create mew welcome pack for new customer...')
+            },
+            { noAck: true }
+          )
+        })
+      })
+    }
+  )
+}
+
+async function emailService() {
+  const conn = amqp.connect(
+    'amqp://localhost',
+    (err, conn) => {
+      conn.createChannel((err, ch) => {
+        var ex = 'Customer created event'
+
+        ch.assertExchange(ex, 'fanout', { durable: false })
+
+        ch.assertQueue('', { exclusive: true }, (err, q) => {
+          console.log(
+            ' [*] Waiting for messages in %s. To exit press CTRL+C',
+            q.queue
+          )
+          ch.bindQueue(q.queue, ex, '')
+
+          ch.consume(
+            q.queue,
+            msg => {
+              console.log(' ✉️  %s', msg.content.toString())
+              console.log(
+                ' ✉️  Construct new email and send to new customer...'
+              )
+            },
+            { noAck: true }
+          )
+        })
+      })
+    }
+  )
+}
+
+loyaltyService()
+postService()
+emailService()
